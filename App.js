@@ -1,12 +1,35 @@
 import React from "react";
 import ReactDOM from "react-dom/client"
 
-
-
-const App = () =>{
+const Header = () =>{
     return (
-        <div>
-           <h1> App component</h1>
+        <div className="header">
+            <div className="logo-container">
+                <img 
+                className="logo"
+                src="logo.png"
+                />
+            </div>
+            <div className="nav-items">
+                <li>Home</li>
+                <li>About Us</li>
+                <li>Contact Us</li>
+                <li>Cart</li>
+            </div>
+
+        </div>
+    )
+
+}
+
+
+const AppLayout = () =>{
+    return (
+        <div className="app">
+          {
+            // header 
+            <Header/>
+          }
         </div>
     )
 
@@ -15,4 +38,4 @@ const App = () =>{
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
-root.render(<App/>)
+root.render(<AppLayout/>)
