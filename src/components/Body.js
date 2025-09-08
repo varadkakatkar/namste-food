@@ -16,15 +16,17 @@ const Body = () => {
   const fetchData = async () => {
     try {
       const locations = [
-        { lat: 12.9716, lng: 77.5946 },   // Bengaluru
-        { lat: 19.0760, lng: 72.8777 },   // Mumbai
-        { lat: 28.6139, lng: 77.2090 },   // Delhi
-        { lat: 17.3850, lng: 78.4867 },   // Hyderabad
-        { lat: 18.5204, lng: 73.8567 },   // Pune
+        { lat: 12.9716, lng: 77.5946 }, // Bengaluru
+        { lat: 19.076, lng: 72.8777 }, // Mumbai
+        { lat: 28.6139, lng: 77.209 }, // Delhi
+        { lat: 17.385, lng: 78.4867 }, // Hyderabad
+        { lat: 18.5204, lng: 73.8567 }, // Pune
       ];
 
       const tryFetch = async (url) => {
-        const res = await fetch(url, { headers: { Accept: 'application/json, text/plain, */*' } });
+        const res = await fetch(url, {
+          headers: { Accept: "application/json, text/plain, */*" },
+        });
         if (!res.ok) return null;
         let json;
         try {
@@ -46,10 +48,12 @@ const Body = () => {
         json = await tryFetch(url);
         if (json) break;
       }
-      console.log('json ',json)
-      const items = json?.data?.cards?.find((c) =>
-        c?.card?.card?.gridElements?.infoWithStyle?.restaurants
-      )?.card?.card?.gridElements?.infoWithStyle?.restaurants ?? validRestaurants;
+      console.log("json ", json);
+      const items =
+        json?.data?.cards?.find(
+          (c) => c?.card?.card?.gridElements?.infoWithStyle?.restaurants
+        )?.card?.card?.gridElements?.infoWithStyle?.restaurants ??
+        validRestaurants;
 
       setListOfRestaurants(items);
       setIsLoading(false);
@@ -61,7 +65,7 @@ const Body = () => {
   };
 
   if (isLoading) {
-    return <Shimmer />
+    return <Shimmer />;
   }
 
   return (
