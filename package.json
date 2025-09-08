@@ -1,7 +1,6 @@
 {
   "name": "namaste-food",
   "version": "1.0.0",
-  
   "scripts": {
     "start": "parcel index.html",
     "build": "parcel build index.html",
@@ -22,6 +21,9 @@
   "homepage": "https://github.com/varadkakatkar/namste-food#readme",
   "description": "",
   "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "node-fetch": "^2.7.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   }
