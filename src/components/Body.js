@@ -1,14 +1,18 @@
 import RestaurantCard from "./RestaurantCard";
 import { restaurants } from "../utils/mockData";
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import Shimmer from "./Shimmer";
 
 const Body = () => {
   // Filter out empty restaurant objects
   const validRestaurants = restaurants.filter((restaurant) => restaurant.info);
   const [listOfRestaurants, setListOfRestaurants] = useState([]);
+  const [filteredRestaurants, setFilteredRestaurants] = useState([]); // Add this for search
   const [isLoading, setIsLoading] = useState(true);
+  const [searchText, setSearchText] = useState("");
 
+  //whenever state variables update, react triggers a reconciliation cycle (re-renders the component ).
+  console.log("Body rendered");
   useEffect(() => {
     fetchData();
   }, []);
@@ -56,10 +60,12 @@ const Body = () => {
         validRestaurants;
 
       setListOfRestaurants(items);
+      setFilteredRestaurants(items); // Set both lists
       setIsLoading(false);
     } catch (e) {
       // Silent fallback to mock data
       setListOfRestaurants(validRestaurants);
+      setFilteredRestaurants(validRestaurants); // Set both lists
       setIsLoading(false);
     }
   };
@@ -71,12 +77,41 @@ const Body = () => {
   return (
     <div className="body">
       <div className="filter">
+        <div className="search">
+          <input
+            type="text"
+            className="search-box"
+            value={searchText}
+            onChange={(e) => {
+              setSearchText(e.target.value);
+            }}
+          />
+          <button
+            className="search-btn"
+            onClick={() => {
+              // filter restaurant card and update UI
+              console.log("Search Text:", searchText);
+              
+              if (searchText.trim() === "") {
+                // If search is empty, show all restaurants
+                setFilteredRestaurants(listOfRestaurants);
+              } else {
+                // Filter restaurants based on search text (case-insensitive)
+                const filtered = listOfRestaurants.filter((res) => {
+                  return res.info.name.toLowerCase().includes(searchText.toLowerCase());
+                });
+                setFilteredRestaurants(filtered);
+              }
+            }}
+          >
+            Search
+          </button>
+        </div>
         <button
           className="filter-btn"
           onClick={() => {
-            setListOfRestaurants(
-              listOfRestaurants.filter((res) => res.info.avgRating > 4.3)
-            );
+            const topRated = listOfRestaurants.filter((res) => res.info.avgRating > 4.4);
+            setFilteredRestaurants(topRated);
           }}
         >
           Top rated Restaurants
@@ -84,14 +119,14 @@ const Body = () => {
         <button
           className="filter-btn"
           onClick={() => {
-            setListOfRestaurants(validRestaurants);
+            setFilteredRestaurants(listOfRestaurants);
           }}
         >
           Reset
         </button>
       </div>
       <div className="res-container">
-        {listOfRestaurants.map((restaurant, index) => (
+        {filteredRestaurants.map((restaurant, index) => (
           <RestaurantCard
             key={restaurant.info.id || index}
             resData={restaurant}

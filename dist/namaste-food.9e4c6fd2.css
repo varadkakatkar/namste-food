@@ -39,6 +39,7 @@
 
 .filter {
   margin: 10px;
+  display: flex;
 }
 
 .filter-btn {

@@ -39,8 +39,12 @@
 }
 
 .filter {
+
     margin: 10px;
+    display: flex;
+
 }
+
 .filter-btn {
     padding: 5px;
     cursor: pointer;
@@ -63,3 +67,5 @@
     display: flex;
     flex-wrap: wrap;
 }
+
+    
