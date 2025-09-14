@@ -61,11 +61,234 @@
     background-color: #f0f0f0;
     margin: 20px;
     border-radius: 10px;
+    padding: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.shimmer-content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.shimmer-image {
+    width: 100%;
+    height: 120px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.shimmer-text {
+    flex: 1;
+    padding: 5px;
+}
+
+.shimmer-line {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+
+.shimmer-line:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+.shimmer-line:nth-child(3) {
+    animation-delay: 0.2s;
+}
+
+.shimmer-line-title {
+    height: 16px;
+    width: 80%;
+}
+
+.shimmer-line-subtitle {
+    height: 12px;
+    width: 60%;
+}
+
+.shimmer-line-small {
+    height: 10px;
+    width: 40%;
 }
 
 .shimmer-container {
     display: flex;
     flex-wrap: wrap;
+}
+
+/* Shimmer animation */
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+/* Menu page shimmer styles */
+.menu-shimmer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.restaurant-info-shimmer {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    height: 200px;
+}
+
+.menu-items-shimmer {
+    display: grid;
+    gap: 20px;
+}
+
+.menu-item-shimmer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 20px;
+    border-radius: 8px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    height: 100px;
+}
+
+.menu-item-shimmer .item-details-shimmer {
+    flex: 1;
+    margin-right: 20px;
+}
+
+.menu-item-shimmer .item-price-shimmer {
+    width: 80px;
+    height: 30px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 4px;
+}
+
+/* Restaurant Menu Page Styles */
+.menu {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.restaurant-info {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.restaurant-info h1 {
+    color: #333;
+    margin-bottom: 15px;
+    font-size: 2.5rem;
+}
+
+.restaurant-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 10px;
+}
+
+.restaurant-details p {
+    margin: 5px 0;
+    color: #666;
+}
+
+.menu-section h2 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 2rem;
+    border-bottom: 2px solid #ff6b6b;
+    padding-bottom: 10px;
+}
+
+.menu-items {
+    display: grid;
+    gap: 20px;
+}
+
+.menu-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: box-shadow 0.3s ease;
+}
+
+.menu-item:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.item-details {
+    flex: 1;
+    margin-right: 20px;
+}
+
+.item-details h3 {
+    color: #333;
+    margin: 0 0 8px 0;
+    font-size: 1.2rem;
+}
+
+.item-description {
+    color: #666;
+    margin: 5px 0;
+    line-height: 1.4;
+}
+
+.item-category {
+    color: #888;
+    font-size: 0.9rem;
+    margin: 5px 0 0 0;
+}
+
+.item-price {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    min-width: 80px;
+}
+
+.price {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #2e7d32;
+}
+
+.original-price {
+    font-size: 0.9rem;
+    color: #999;
+    text-decoration: line-through;
+    margin-top: 2px;
+}
+
+/* Loading state */
+.menu h1 {
+    text-align: center;
+    color: #666;
+    margin-top: 50px;
 }
 
     

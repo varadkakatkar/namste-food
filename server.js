@@ -142,6 +142,163 @@ app.get("/api/restaurants", proxyRestaurants);
 // Backward-compatible path if frontend calls "/restaurants" directly
 app.get("/restaurants", proxyRestaurants);
 
+// Proxy endpoint for restaurant menu
+const proxyMenu = async (req, res) => {
+  try {
+    const { restaurantId } = req.params;
+    const lat = req.query.lat || "12.9716";
+    const lng = req.query.lng || "77.5946";
+    
+    console.log("Proxying menu for restaurant", { restaurantId, lat, lng });
+    
+    const url = `https://www.swiggy.com/dapi/menu/pl?page-type=REGULAR_MENU&complete-menu=true&lat=${encodeURIComponent(
+      lat
+    )}&lng=${encodeURIComponent(lng)}&restaurantId=${encodeURIComponent(restaurantId)}`;
+
+    const fetchOptions = {
+      headers: {
+        "User-Agent":
+          req.get("user-agent") ||
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        Accept: "application/json, text/plain, */*",
+        Referer: "https://www.swiggy.com/",
+        "Accept-Language": req.get("accept-language") || "en-US,en;q=0.9",
+        Origin: "https://www.swiggy.com",
+      },
+    };
+
+    let response = await fetch(url, fetchOptions);
+
+    // Fallback via corsproxy if blocked
+    if (!response.ok) {
+      const originalStatus = response.status;
+      const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(url)}`;
+      console.warn(
+        "Primary upstream failed with",
+        originalStatus,
+        "retrying via corsproxy"
+      );
+      response = await fetch(proxyUrl, fetchOptions);
+      if (!response.ok) {
+        const text = await response.text().catch(() => "");
+        console.error(
+          "Upstream error (after proxy)",
+          response.status,
+          text?.slice(0, 300)
+        );
+        // Final fallback: minimal mock menu payload
+        const fallback = {
+          data: {
+            cards: [
+              {
+                card: {
+                  card: {
+                    info: {
+                      name: "Mock Restaurant Menu",
+                      id: restaurantId,
+                    },
+                  },
+                },
+                groupedCard: {
+                  cardGroupMap: {
+                    REGULAR: {
+                      cards: [
+                        {
+                          card: {
+                            card: {
+                              title: "Recommended",
+                              itemCards: [
+                                {
+                                  card: {
+                                    info: {
+                                      name: "Mock Item 1",
+                                      price: 299,
+                                      description: "This is a mock menu item",
+                                    },
+                                  },
+                                },
+                                {
+                                  card: {
+                                    info: {
+                                      name: "Mock Item 2",
+                                      price: 199,
+                                      description: "Another mock menu item",
+                                    },
+                                  },
+                                },
+                              ],
+                            },
+                          },
+                        },
+                      ],
+                    },
+                  },
+                },
+              },
+            ],
+          },
+        };
+        res.set("X-Namaste-Proxy", "fallback-mock");
+        return res.status(200).json(fallback);
+      }
+    }
+
+    const data = await response.json();
+    console.log("Menu data received for restaurant", restaurantId);
+    res.set("X-Namaste-Proxy", "upstream-ok");
+    res.status(200).json(data);
+  } catch (error) {
+    console.log("Menu proxy error", error);
+    res.set("X-Namaste-Proxy", "proxy-error");
+    res.status(200).json({
+      data: {
+        cards: [
+          {
+            card: {
+              card: {
+                info: {
+                  name: "Error Restaurant Menu",
+                  id: req.params.restaurantId,
+                },
+              },
+            },
+            groupedCard: {
+              cardGroupMap: {
+                REGULAR: {
+                  cards: [
+                    {
+                      card: {
+                        card: {
+                          title: "Error Loading Menu",
+                          itemCards: [
+                            {
+                              card: {
+                                info: {
+                                  name: "Menu temporarily unavailable",
+                                  price: 0,
+                                  description: "Please try again later",
+                                },
+                              },
+                            },
+                          ],
+                        },
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+          },
+        ],
+      },
+      meta: { error: "Menu proxy failed", details: String(error) },
+    });
+  }
+};
+
+// Menu proxy endpoint
+app.get("/api/menu/:restaurantId", proxyMenu);
+
 const server = http.createServer(app);
 
 server.listen(3030, () => {

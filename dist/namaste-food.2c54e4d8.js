@@ -32887,9 +32887,11 @@ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _jsxDevRuntime = require("react/jsx-dev-runtime");
 var _constantsJs = require("../utils/constants.js");
+var _reactRouterDom = require("react-router-dom");
 const RestaurantCard = (props)=>{
     const { resData } = props;
-    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _reactRouterDom.Link), {
+        to: `/restaurants/${resData.info.id}`,
         className: "res-card",
         children: [
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("img", {
@@ -32956,7 +32958,7 @@ $RefreshReg$(_c, "RestaurantCard");
   globalThis.$RefreshReg$ = prevRefreshReg;
   globalThis.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"dVPUn","../utils/constants.js":"dIVBf","@parcel/transformer-js/src/esmodule-helpers.js":"aXJfZ","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"1Qzh1"}],"4sSQA":[function(require,module,exports,__globalThis) {
+},{"react/jsx-dev-runtime":"dVPUn","../utils/constants.js":"dIVBf","@parcel/transformer-js/src/esmodule-helpers.js":"aXJfZ","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"1Qzh1","react-router-dom":"61z4w"}],"4sSQA":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "restaurants", ()=>restaurants);
@@ -33537,7 +33539,53 @@ const Shimmer = ()=>{
         children: Array.from({
             length: 20
         }).map((_, index)=>/*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                className: "shimmer-card"
+                className: "shimmer-card",
+                children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                    className: "shimmer-content",
+                    children: [
+                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                            className: "shimmer-image"
+                        }, void 0, false, {
+                            fileName: "src/components/Shimmer.js",
+                            lineNumber: 9,
+                            columnNumber: 17
+                        }, undefined),
+                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                            className: "shimmer-text",
+                            children: [
+                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                    className: "shimmer-line shimmer-line-title"
+                                }, void 0, false, {
+                                    fileName: "src/components/Shimmer.js",
+                                    lineNumber: 11,
+                                    columnNumber: 19
+                                }, undefined),
+                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                    className: "shimmer-line shimmer-line-subtitle"
+                                }, void 0, false, {
+                                    fileName: "src/components/Shimmer.js",
+                                    lineNumber: 12,
+                                    columnNumber: 19
+                                }, undefined),
+                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                    className: "shimmer-line shimmer-line-small"
+                                }, void 0, false, {
+                                    fileName: "src/components/Shimmer.js",
+                                    lineNumber: 13,
+                                    columnNumber: 19
+                                }, undefined)
+                            ]
+                        }, void 0, true, {
+                            fileName: "src/components/Shimmer.js",
+                            lineNumber: 10,
+                            columnNumber: 17
+                        }, undefined)
+                    ]
+                }, void 0, true, {
+                    fileName: "src/components/Shimmer.js",
+                    lineNumber: 8,
+                    columnNumber: 15
+                }, undefined)
             }, index, false, {
                 fileName: "src/components/Shimmer.js",
                 lineNumber: 7,
@@ -33718,66 +33766,407 @@ parcelHelpers.defineInteropFlag(exports);
 var _jsxDevRuntime = require("react/jsx-dev-runtime");
 var _react = require("react");
 var _reactDefault = parcelHelpers.interopDefault(_react);
+var _reactRouterDom = require("react-router-dom");
+var _menuShimmer = require("./MenuShimmer");
+var _menuShimmerDefault = parcelHelpers.interopDefault(_menuShimmer);
+var _s = $RefreshSig$();
 const RestaurantMenuPage = ()=>{
+    _s();
+    const { id } = (0, _reactRouterDom.useParams)();
+    const restaurantId = id;
+    const [restaurantInfo, setRestaurantInfo] = (0, _react.useState)(null);
+    const [menuItems, setMenuItems] = (0, _react.useState)([]);
+    const [loading, setLoading] = (0, _react.useState)(true);
+    (0, _react.useEffect)(()=>{
+        fetchData();
+    }, [
+        restaurantId
+    ]);
+    async function fetchData() {
+        try {
+            setLoading(true);
+            const data = await fetch(`http://localhost:3030/api/menu/${restaurantId}?lat=12.9716&lng=77.5946`);
+            const json = await data.json();
+            console.log('Menu data:', json);
+            console.log('Full response structure:', JSON.stringify(json, null, 2));
+            // Extract restaurant info
+            console.log('Looking for restaurant info in cards:', json.data?.cards);
+            const restaurantCard = json.data?.cards?.find((card)=>card.card?.card?.info);
+            console.log('Found restaurant card:', restaurantCard);
+            if (restaurantCard) {
+                setRestaurantInfo(restaurantCard.card.card.info);
+                console.log('Set restaurant info:', restaurantCard.card.card.info);
+            }
+            // Extract menu items
+            console.log('Looking for menu cards:', json.data?.cards);
+            const menuCard = json.data?.cards?.find((card)=>card.groupedCard?.cardGroupMap?.REGULAR);
+            console.log('Found menu card:', menuCard);
+            if (menuCard) {
+                const allMenuItems = [];
+                const regularCards = menuCard.groupedCard.cardGroupMap.REGULAR.cards;
+                console.log('Regular cards:', regularCards);
+                regularCards.forEach((category)=>{
+                    console.log('Processing category:', category.card?.card?.title);
+                    if (category.card?.card?.itemCards) {
+                        console.log('Found item cards:', category.card.card.itemCards);
+                        category.card.card.itemCards.forEach((item)=>{
+                            allMenuItems.push({
+                                ...item.card.info,
+                                category: category.card.card.title || 'Menu Items'
+                            });
+                        });
+                    }
+                });
+                console.log('All menu items:', allMenuItems);
+                setMenuItems(allMenuItems);
+            } else console.log('No menu card found. Available cards:', json.data?.cards?.map((card)=>({
+                    type: card.card?.card?.type || 'unknown',
+                    hasGroupedCard: !!card.groupedCard,
+                    hasInfo: !!card.card?.card?.info
+                })));
+        } catch (error) {
+            console.error('Error fetching menu data:', error);
+        } finally{
+            setLoading(false);
+        }
+    }
+    if (loading) return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _menuShimmerDefault.default), {}, void 0, false, {
+        fileName: "src/components/RestaurantMenuPage.js",
+        lineNumber: 73,
+        columnNumber: 12
+    }, undefined);
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
         className: "menu",
         children: [
-            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h1", {
-                children: "Name of Restaurant"
-            }, void 0, false, {
-                fileName: "src/components/RestaurantMenuPage.js",
-                lineNumber: 6,
-                columnNumber: 9
-            }, undefined),
-            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h2", {
-                children: "Menu"
-            }, void 0, false, {
-                fileName: "src/components/RestaurantMenuPage.js",
-                lineNumber: 7,
-                columnNumber: 9
-            }, undefined),
-            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("ul", {
+            restaurantInfo && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                className: "restaurant-info",
                 children: [
-                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("li", {
-                        children: "Biryani"
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h1", {
+                        children: restaurantInfo.name
                     }, void 0, false, {
                         fileName: "src/components/RestaurantMenuPage.js",
-                        lineNumber: 9,
-                        columnNumber: 13
+                        lineNumber: 80,
+                        columnNumber: 11
                     }, undefined),
-                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("li", {
-                        children: "Burger"
-                    }, void 0, false, {
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                        className: "restaurant-details",
+                        children: [
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
+                                children: [
+                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("strong", {
+                                        children: "Cuisines:"
+                                    }, void 0, false, {
+                                        fileName: "src/components/RestaurantMenuPage.js",
+                                        lineNumber: 82,
+                                        columnNumber: 16
+                                    }, undefined),
+                                    " ",
+                                    restaurantInfo.cuisines?.join(', ')
+                                ]
+                            }, void 0, true, {
+                                fileName: "src/components/RestaurantMenuPage.js",
+                                lineNumber: 82,
+                                columnNumber: 13
+                            }, undefined),
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
+                                children: [
+                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("strong", {
+                                        children: "Rating:"
+                                    }, void 0, false, {
+                                        fileName: "src/components/RestaurantMenuPage.js",
+                                        lineNumber: 83,
+                                        columnNumber: 16
+                                    }, undefined),
+                                    " ",
+                                    restaurantInfo.avgRating,
+                                    " \u2B50"
+                                ]
+                            }, void 0, true, {
+                                fileName: "src/components/RestaurantMenuPage.js",
+                                lineNumber: 83,
+                                columnNumber: 13
+                            }, undefined),
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
+                                children: [
+                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("strong", {
+                                        children: "Cost for Two:"
+                                    }, void 0, false, {
+                                        fileName: "src/components/RestaurantMenuPage.js",
+                                        lineNumber: 84,
+                                        columnNumber: 16
+                                    }, undefined),
+                                    " \u20B9",
+                                    restaurantInfo.costForTwo / 100
+                                ]
+                            }, void 0, true, {
+                                fileName: "src/components/RestaurantMenuPage.js",
+                                lineNumber: 84,
+                                columnNumber: 13
+                            }, undefined),
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
+                                children: [
+                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("strong", {
+                                        children: "Delivery Time:"
+                                    }, void 0, false, {
+                                        fileName: "src/components/RestaurantMenuPage.js",
+                                        lineNumber: 85,
+                                        columnNumber: 16
+                                    }, undefined),
+                                    " ",
+                                    restaurantInfo.sla?.deliveryTime,
+                                    " minutes"
+                                ]
+                            }, void 0, true, {
+                                fileName: "src/components/RestaurantMenuPage.js",
+                                lineNumber: 85,
+                                columnNumber: 13
+                            }, undefined),
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
+                                children: [
+                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("strong", {
+                                        children: "Area:"
+                                    }, void 0, false, {
+                                        fileName: "src/components/RestaurantMenuPage.js",
+                                        lineNumber: 86,
+                                        columnNumber: 16
+                                    }, undefined),
+                                    " ",
+                                    restaurantInfo.areaName
+                                ]
+                            }, void 0, true, {
+                                fileName: "src/components/RestaurantMenuPage.js",
+                                lineNumber: 86,
+                                columnNumber: 13
+                            }, undefined),
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
+                                children: [
+                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("strong", {
+                                        children: "Address:"
+                                    }, void 0, false, {
+                                        fileName: "src/components/RestaurantMenuPage.js",
+                                        lineNumber: 87,
+                                        columnNumber: 16
+                                    }, undefined),
+                                    " ",
+                                    restaurantInfo.areaName,
+                                    ", ",
+                                    restaurantInfo.city
+                                ]
+                            }, void 0, true, {
+                                fileName: "src/components/RestaurantMenuPage.js",
+                                lineNumber: 87,
+                                columnNumber: 13
+                            }, undefined)
+                        ]
+                    }, void 0, true, {
                         fileName: "src/components/RestaurantMenuPage.js",
-                        lineNumber: 10,
-                        columnNumber: 13
-                    }, undefined),
-                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("li", {
-                        children: "Diet Coke"
-                    }, void 0, false, {
-                        fileName: "src/components/RestaurantMenuPage.js",
-                        lineNumber: 11,
-                        columnNumber: 13
+                        lineNumber: 81,
+                        columnNumber: 11
                     }, undefined)
                 ]
             }, void 0, true, {
                 fileName: "src/components/RestaurantMenuPage.js",
-                lineNumber: 8,
+                lineNumber: 79,
                 columnNumber: 9
+            }, undefined),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                className: "menu-section",
+                children: [
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h2", {
+                        children: "Menu Items"
+                    }, void 0, false, {
+                        fileName: "src/components/RestaurantMenuPage.js",
+                        lineNumber: 93,
+                        columnNumber: 9
+                    }, undefined),
+                    menuItems.length > 0 ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                        className: "menu-items",
+                        children: menuItems.map((item, index)=>/*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                className: "menu-item",
+                                children: [
+                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                        className: "item-details",
+                                        children: [
+                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h3", {
+                                                children: item.name
+                                            }, void 0, false, {
+                                                fileName: "src/components/RestaurantMenuPage.js",
+                                                lineNumber: 99,
+                                                columnNumber: 19
+                                            }, undefined),
+                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
+                                                className: "item-description",
+                                                children: item.description
+                                            }, void 0, false, {
+                                                fileName: "src/components/RestaurantMenuPage.js",
+                                                lineNumber: 100,
+                                                columnNumber: 19
+                                            }, undefined),
+                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
+                                                className: "item-category",
+                                                children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("em", {
+                                                    children: item.category
+                                                }, void 0, false, {
+                                                    fileName: "src/components/RestaurantMenuPage.js",
+                                                    lineNumber: 101,
+                                                    columnNumber: 48
+                                                }, undefined)
+                                            }, void 0, false, {
+                                                fileName: "src/components/RestaurantMenuPage.js",
+                                                lineNumber: 101,
+                                                columnNumber: 19
+                                            }, undefined)
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "src/components/RestaurantMenuPage.js",
+                                        lineNumber: 98,
+                                        columnNumber: 17
+                                    }, undefined),
+                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                        className: "item-price",
+                                        children: [
+                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                                className: "price",
+                                                children: [
+                                                    "\u20B9",
+                                                    item.price / 100
+                                                ]
+                                            }, void 0, true, {
+                                                fileName: "src/components/RestaurantMenuPage.js",
+                                                lineNumber: 104,
+                                                columnNumber: 19
+                                            }, undefined),
+                                            item.defaultPrice && item.defaultPrice !== item.price && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                                className: "original-price",
+                                                children: [
+                                                    "\u20B9",
+                                                    item.defaultPrice / 100
+                                                ]
+                                            }, void 0, true, {
+                                                fileName: "src/components/RestaurantMenuPage.js",
+                                                lineNumber: 106,
+                                                columnNumber: 21
+                                            }, undefined)
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "src/components/RestaurantMenuPage.js",
+                                        lineNumber: 103,
+                                        columnNumber: 17
+                                    }, undefined)
+                                ]
+                            }, index, true, {
+                                fileName: "src/components/RestaurantMenuPage.js",
+                                lineNumber: 97,
+                                columnNumber: 15
+                            }, undefined))
+                    }, void 0, false, {
+                        fileName: "src/components/RestaurantMenuPage.js",
+                        lineNumber: 95,
+                        columnNumber: 11
+                    }, undefined) : /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
+                        children: "No menu items available"
+                    }, void 0, false, {
+                        fileName: "src/components/RestaurantMenuPage.js",
+                        lineNumber: 113,
+                        columnNumber: 11
+                    }, undefined)
+                ]
+            }, void 0, true, {
+                fileName: "src/components/RestaurantMenuPage.js",
+                lineNumber: 92,
+                columnNumber: 7
             }, undefined)
         ]
     }, void 0, true, {
         fileName: "src/components/RestaurantMenuPage.js",
-        lineNumber: 5,
+        lineNumber: 77,
         columnNumber: 5
     }, undefined);
 };
+_s(RestaurantMenuPage, "hTJpZCCJqbnmiA1O7rkh/7sT30Q=", false, function() {
+    return [
+        (0, _reactRouterDom.useParams)
+    ];
+});
 _c = RestaurantMenuPage;
 exports.default = RestaurantMenuPage;
 var _c;
 $RefreshReg$(_c, "RestaurantMenuPage");
 
   $parcel$ReactRefreshHelpers$ddbc.postlude(module);
+} finally {
+  globalThis.$RefreshReg$ = prevRefreshReg;
+  globalThis.$RefreshSig$ = prevRefreshSig;
+}
+},{"react/jsx-dev-runtime":"dVPUn","react":"jMk1U","@parcel/transformer-js/src/esmodule-helpers.js":"aXJfZ","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"1Qzh1","react-router-dom":"61z4w","./MenuShimmer":"1j0zx"}],"1j0zx":[function(require,module,exports,__globalThis) {
+var $parcel$ReactRefreshHelpers$cd2d = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+$parcel$ReactRefreshHelpers$cd2d.init();
+var prevRefreshReg = globalThis.$RefreshReg$;
+var prevRefreshSig = globalThis.$RefreshSig$;
+$parcel$ReactRefreshHelpers$cd2d.prelude(module);
+
+try {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _jsxDevRuntime = require("react/jsx-dev-runtime");
+var _react = require("react");
+var _reactDefault = parcelHelpers.interopDefault(_react);
+const MenuShimmer = ()=>{
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+        className: "menu-shimmer-container",
+        children: [
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                className: "restaurant-info-shimmer"
+            }, void 0, false, {
+                fileName: "src/components/MenuShimmer.js",
+                lineNumber: 7,
+                columnNumber: 7
+            }, undefined),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                className: "menu-items-shimmer",
+                children: Array.from({
+                    length: 8
+                }).map((_, index)=>/*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                        className: "menu-item-shimmer",
+                        children: [
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                className: "item-details-shimmer"
+                            }, void 0, false, {
+                                fileName: "src/components/MenuShimmer.js",
+                                lineNumber: 13,
+                                columnNumber: 13
+                            }, undefined),
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                className: "item-price-shimmer"
+                            }, void 0, false, {
+                                fileName: "src/components/MenuShimmer.js",
+                                lineNumber: 14,
+                                columnNumber: 13
+                            }, undefined)
+                        ]
+                    }, index, true, {
+                        fileName: "src/components/MenuShimmer.js",
+                        lineNumber: 12,
+                        columnNumber: 11
+                    }, undefined))
+            }, void 0, false, {
+                fileName: "src/components/MenuShimmer.js",
+                lineNumber: 10,
+                columnNumber: 7
+            }, undefined)
+        ]
+    }, void 0, true, {
+        fileName: "src/components/MenuShimmer.js",
+        lineNumber: 5,
+        columnNumber: 5
+    }, undefined);
+};
+_c = MenuShimmer;
+exports.default = MenuShimmer;
+var _c;
+$RefreshReg$(_c, "MenuShimmer");
+
+  $parcel$ReactRefreshHelpers$cd2d.postlude(module);
 } finally {
   globalThis.$RefreshReg$ = prevRefreshReg;
   globalThis.$RefreshSig$ = prevRefreshSig;
