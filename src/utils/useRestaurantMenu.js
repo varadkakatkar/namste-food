@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const useRestaurantMenu = (restaurantId) => {
   const [restaurantInfo, setRestaurantInfo] = useState(null);
